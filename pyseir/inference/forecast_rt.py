@@ -52,7 +52,7 @@ class ForecastRt:
         self.csv_output_folder = "./csv_files/"
         self.df_all = df_all
         self.states = "All"  # All to use All
-        self.csv_path = "./pyseir_data/merged_results_delphi.csv"
+        self.csv_path = "./pyseir_data/merged_delphi_df.csv"
 
         self.merged_df = True  # set to true if input dataframe merges all areas
         self.states_only = True  # set to true if you only want to train on state level data (county level training not implemented...yet)
@@ -99,14 +99,18 @@ class ForecastRt:
             "raw_wcli",
             "raw_wili",
             "unsmoothed_community",
+            "full_mobility",
+            "part_mobility",
         ]
         self.forecast_variables = [
             self.predict_variable,
             f"smooth_{self.daily_case_var}",
             f"smooth_{self.daily_death_var}",
             "smooth_new_negative_tests",  # calculated by diffing input 'negative_tests' column
-            "Rt_MAP__new_cases",
+            # "Rt_MAP__new_cases",
             self.fips_var_name_int,
+            "full_mobility",
+            "part_mobility",
             "smooth_contact_tracers_count",  # number of contacts traced
             "smoothed_cli",
             "smoothed_hh_cmnty_cli",
@@ -145,7 +149,7 @@ class ForecastRt:
         self.percent_train = True
         self.train_size = 0.8
         self.n_test_days = 10
-        self.n_batch = 20
+        self.n_batch = 10
         self.n_epochs = 1000
         self.n_hidden_layer_dimensions = 100
         self.dropout = 0
@@ -434,8 +438,8 @@ class ForecastRt:
         final_list_test_X = np.concatenate(list_test_X)
         final_list_test_Y = np.concatenate(list_test_Y)
 
-        skip_train = 5
-        skip_test = 6
+        skip_train = 1
+        skip_test = 0
         if skip_train > 0:
             final_list_train_X = final_list_train_X[:-skip_train]
             final_list_train_Y = final_list_train_Y[:-skip_train]
